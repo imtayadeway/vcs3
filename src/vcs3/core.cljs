@@ -13,7 +13,7 @@
 (defn hello-world []
   [:div
    [:h1 (:text @app-state)]
-   [:h3 "Edit this and watch it change!"]])
+   [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]])
 
 (reagent/render-component [hello-world]
                           (. js/document (getElementById "app")))
