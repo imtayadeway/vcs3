@@ -7,12 +7,10 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 
-(defonce app-state (atom {:text "Hello world!"}))
-
+(defonce app-state (atom {}))
 
 (defn hello-world []
   [:div
-   [:h1 (:text @app-state)]
    [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]])
 
 (reagent/render-component [hello-world]
