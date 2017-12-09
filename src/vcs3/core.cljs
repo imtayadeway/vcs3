@@ -13,11 +13,11 @@
     (.connect oscillator (.-destination context))
     (.start oscillator)))
 
-(defn hello-world []
+(defn vcs3 []
   [:div {:on-click #(oscillator)}
    [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]])
 
-(reagent/render-component [hello-world]
+(reagent/render-component [vcs3]
                           (. js/document (getElementById "app")))
 
 (defn on-js-reload [])
