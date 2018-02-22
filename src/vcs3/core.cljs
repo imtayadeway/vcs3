@@ -11,30 +11,26 @@
     (.start oscillator)
     oscillator))
 
-(defonce context (new js/window.AudioContext))
-(defonce oscillator-1 (create-oscillator context "sine"))
-
 (defonce vcs3-data
-  (atom {:context context
-         :oscillator-1 {:frequency 440 :shape "sine"}}))
-
-(defn update-vcs3
-  []
-  (set! (.-value (.-frequency oscillator-1)) (:frequency (:oscillator-1 @vcs3-data))))
+  (let [context (new js/window.AudioContext)]
+    (atom {:context context
+           :oscillator-1 (create-oscillator context "sine")})))
 
 (defn turny-dial
-  [component attribute value min max]
+  [component value min max]
   [:input {:type "range" :value value :min min :max max
            :style {:width "100%"}
            :on-change (fn [e]
-                        (swap! vcs3-data assoc-in [component attribute] (.. e -target -value))
-                        (update-vcs3))}])
+                        (swap! vcs3-data assoc :rand (rand)) ;; ugh
+                        (swap! vcs3-data (fn [data]
+                                           (set! (.-value (.-frequency (component data))) (.. e -target -value))
+                                           data)))}])
 
 (defn vcs3 []
   [:div
-   [:h3 "Oscillator 1"]
-   [:p "Oscillator 1 is oscillating at " (:frequency (:oscillator-1 @vcs3-data)) " Hz."]
-   [turny-dial :oscillator-1 :frequency (:frequency (:oscillator-1 @vcs3-data)) 1 10000]
+   [:div [:h3 "Oscillator 1"]
+    [:p "Oscillator 1 is oscillating at " (.-value (.-frequency (:oscillator-1 @vcs3-data))) " Hz."]
+    [turny-dial :oscillator-1 (.-value (.-frequency (:oscillator-1 @vcs3-data))) 1 10000]]
    [:div
     [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]]])
 
