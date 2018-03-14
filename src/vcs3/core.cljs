@@ -13,12 +13,19 @@
 
 (defonce context (new js/window.AudioContext))
 (defonce oscillator-1 (create-oscillator context "sine"))
-(defonce vcs3-data (atom {:oscillator-1 {:frequency 1}}))
+(defonce oscillator-2 (create-oscillator context "square"))
+(defonce vcs3-data (atom {:oscillator-1 {:frequency 1}
+                          :oscillator-2 {:frequency 1}}))
 
 (add-watch vcs3-data :oscillator-1-watcher
            (fn [key atom old-state new-state]
              (when (not= (:oscillator-1 old-state) (:oscillator-1 new-state))
                (set! (.-value (.-frequency oscillator-1)) (:frequency (:oscillator-1 new-state))))))
+
+(add-watch vcs3-data :oscillator-2-watcher
+           (fn [_ _ old-state new-state]
+             (when (not= (:oscillator-2 old-state) (:oscillator-2 new-state))
+               (set! (.-value (.-frequency oscillator-2)) (:frequency (:oscillator-2 new-state))))))
 
 (defn oscillator-1-frequency []
   [:div
@@ -28,11 +35,22 @@
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-1 :frequency] (.. e -target -value)))}]])
 
+(defn oscillator-2-frequency []
+  [:div
+   [:h6 "Frequency"]
+   [:p "Oscillator 2 is oscillating at " (:frequency (:oscillator-2 @vcs3-data)) " Hz."]
+   [:input {:type "range" :value (:frequency (:oscillator-2 @vcs3-data)) :min 1 :max 10000
+            :style {:width "100%"}
+            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-2 :frequency] (.. e -target -value)))}]])
+
 (defn vcs3 []
   [:div
    [:div
     [:h3 "Oscillator 1"]
     [oscillator-1-frequency]]
+   [:div
+    [:h3 "Oscillator 2"]
+    [oscillator-2-frequency]]
    [:div
     [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]]])
 
