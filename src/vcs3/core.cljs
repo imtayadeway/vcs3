@@ -13,12 +13,12 @@
     (.start oscillator)
     oscillator))
 
-(defonce oscillator-1 (create-oscillator "sine" 1))
-(defonce oscillator-2 (create-oscillator "square" 1))
-(defonce oscillator-3 (create-oscillator "square" 0.05))
-(defonce vcs3-data (atom {:oscillator-1 {:frequency 1}
-                          :oscillator-2 {:frequency 1}
-                          :oscillator-3 {:frequency 0.05}}))
+(defonce oscillator-1 (create-oscillator "sine" 0.6))
+(defonce oscillator-2 (create-oscillator "square" 0.6))
+(defonce oscillator-3 (create-oscillator "square" 0.015))
+(defonce vcs3-data (atom {:oscillator-1 {:frequency 0.6}
+                          :oscillator-2 {:frequency 0.6}
+                          :oscillator-3 {:frequency 0.015}}))
 
 (add-watch vcs3-data :oscillator-1-watcher
            (fn [_ _ old-state new-state]
@@ -39,7 +39,7 @@
   [:div
    [:h6 "Frequency"]
    [:p "Oscillator 1 is oscillating at " (:frequency (:oscillator-1 @vcs3-data)) " Hz."]
-   [:input {:type "range" :value (:frequency (:oscillator-1 @vcs3-data)) :min 1 :max 10000
+   [:input {:type "range" :value (:frequency (:oscillator-1 @vcs3-data)) :min 0.6 :max 16750
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-1 :frequency] (.. e -target -value)))}]])
 
@@ -47,7 +47,7 @@
   [:div
    [:h6 "Frequency"]
    [:p "Oscillator 2 is oscillating at " (:frequency (:oscillator-2 @vcs3-data)) " Hz."]
-   [:input {:type "range" :value (:frequency (:oscillator-2 @vcs3-data)) :min 1 :max 10000
+   [:input {:type "range" :value (:frequency (:oscillator-2 @vcs3-data)) :min 0.6 :max 16750
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-2 :frequency] (.. e -target -value)))}]])
 
@@ -55,7 +55,7 @@
   [:div
    [:h6 "Frequency"]
    [:p "Oscillator 3 is oscillating at " (:frequency (:oscillator-3 @vcs3-data)) " Hz."]
-   [:input {:type "range" :value (:frequency (:oscillator-3 @vcs3-data)) :min 0.05 :max 500
+   [:input {:type "range" :value (:frequency (:oscillator-3 @vcs3-data)) :min 0.015 :max 500
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-3 :frequency] (.. e -target -value)))}]])
 
