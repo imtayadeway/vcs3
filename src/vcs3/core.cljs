@@ -73,6 +73,11 @@
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-3 :frequency] (.. e -target -value)))}]])
 
+(defn patch [from to]
+  (let [checked (to (from (:matrix @vcs3-data)))]
+    [:input {:type "checkbox" :checked checked
+             :on-change #(swap! vcs3-data assoc-in [:matrix from to] (not checked))}]))
+
 (defn vcs3 []
   [:div
    [:div
@@ -93,13 +98,13 @@
        [:th "Output Ch. 1"]]
       [:tr
        [:th "Oscillator 1 (sine)"]
-       [:td [:input {:type "checkbox" :checked (:output-1 (:oscillator-1 (:matrix @vcs3-data))) :on-change #(swap! vcs3-data assoc-in [:matrix :oscillator-1 :output-1] (not (:output-1 (:oscillator-1 (:matrix @vcs3-data)))))}]]]
+       [:td [patch :oscillator-1 :output-1]]]
       [:tr
        [:th "Oscillator 2 (square)"]
-       [:td [:input {:type "checkbox" :checked (:output-1 (:oscillator-2 (:matrix @vcs3-data))) :on-change #(swap! vcs3-data assoc-in [:matrix :oscillator-2 :output-1] (not (:output-1 (:oscillator-2 (:matrix @vcs3-data)))))}]]]
+       [:td [patch :oscillator-2 :output-1]]]
       [:tr
        [:th "Oscillator 3 (square)"]
-       [:td [:input {:type "checkbox" :checked (:output-1 (:oscillator-3 (:matrix @vcs3-data))) :on-change #(swap! vcs3-data assoc-in [:matrix :oscillator-3 :output-1] (not (:output-1 (:oscillator-3 (:matrix @vcs3-data)))))}]]]]]]
+       [:td [patch :oscillator-3 :output-1]]]]]]
    [:div
     [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]]])
 
