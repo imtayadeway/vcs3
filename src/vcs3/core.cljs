@@ -5,17 +5,17 @@
 
 (defonce context (new js/window.AudioContext))
 
-(defn create-oscillator [type]
+(defn create-oscillator [type frequency]
   (let [oscillator (.createOscillator context)]
     (set! (.-type oscillator) type)
-    (set! (.-value (.-frequency oscillator)) 440)
+    (set! (.-value (.-frequency oscillator)) frequency)
     (.connect oscillator (.-destination context))
     (.start oscillator)
     oscillator))
 
-(defonce oscillator-1 (create-oscillator "sine"))
-(defonce oscillator-2 (create-oscillator "square"))
-(defonce oscillator-3 (create-oscillator "square"))
+(defonce oscillator-1 (create-oscillator "sine" 1))
+(defonce oscillator-2 (create-oscillator "square" 1))
+(defonce oscillator-3 (create-oscillator "square" 0.05))
 (defonce vcs3-data (atom {:oscillator-1 {:frequency 1}
                           :oscillator-2 {:frequency 1}
                           :oscillator-3 {:frequency 0.05}}))
