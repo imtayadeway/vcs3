@@ -18,7 +18,7 @@
                           :oscillator-2 {:frequency 1}}))
 
 (add-watch vcs3-data :oscillator-1-watcher
-           (fn [key atom old-state new-state]
+           (fn [_ _ old-state new-state]
              (when (not= (:oscillator-1 old-state) (:oscillator-1 new-state))
                (set! (.-value (.-frequency oscillator-1)) (:frequency (:oscillator-1 new-state))))))
 
