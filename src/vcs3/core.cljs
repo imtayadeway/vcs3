@@ -93,7 +93,7 @@
     [:h3 "Matrix Board"]
     [:table
      [:tbody
-      [:tr {:style {:writing-mode "vertical-lr"}}
+      [:tr.matrix-outputs
        [:td]
        [:th "Output Ch. 1"]]
       [:tr
