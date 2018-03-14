@@ -11,37 +11,28 @@
     (.start oscillator)
     oscillator))
 
-(defonce vcs3-data
-  (let [context (new js/window.AudioContext)]
-    (atom {:context context
-           :oscillator-1 {:frequency 440}})))
+(defonce context (new js/window.AudioContext))
+(defonce oscillator-1 (create-oscillator context "sine"))
+(defonce vcs3-data (atom {:oscillator-1 {:frequency 1}}))
 
-(defn oscillator-1-inner []
-  (let [osc (atom (create-oscillator (new js/window.AudioContext), "sine"))
-        update (fn [comp]
-                 (let [{frequency :frequency} (reagent/props comp)]
-                   (set! (.-value (.-frequency @osc)) frequency)))]
+(add-watch vcs3-data :oscillator-1-watcher
+           (fn [key atom old-state new-state]
+             (when (not= (:oscillator-1 old-state) (:oscillator-1 new-state))
+               (set! (.-value (.-frequency oscillator-1)) (:frequency (:oscillator-1 new-state))))))
 
-    (reagent/create-class
-     {:reagent-render (fn [])
-      :component-will-mount (fn [comp] (update comp))
-      :component-did-update update
-      :display-name "oscillator-1-inner"})))
-
-(defn oscillator-1-outer []
-  (let [data (atom {:frequency 1})]
-    (fn []
-      [:div
-       [:h3 "Oscillator 1"]
-       [:p "Oscillator 1 is oscillating at " (:frequency @data) " Hz."]
-       [:input {:type "range" :value (:frequency @data) :min 1 :max 10000
-                :style {:width "100%"}
-                :on-change (fn [e] (swap! data assoc :frequency (.. e -target -value)))}]
-       [oscillator-1-inner @data]])))
+(defn oscillator-1-frequency []
+  [:div
+   [:h6 "Frequency"]
+   [:p "Oscillator 1 is oscillating at " (:frequency (:oscillator-1 @vcs3-data)) " Hz."]
+   [:input {:type "range" :value (:frequency (:oscillator-1 @vcs3-data)) :min 1 :max 10000
+            :style {:width "100%"}
+            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-1 :frequency] (.. e -target -value)))}]])
 
 (defn vcs3 []
   [:div
-   [oscillator-1-outer]
+   [:div
+    [:h3 "Oscillator 1"]
+    [oscillator-1-frequency]]
    [:div
     [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]]])
 
