@@ -29,7 +29,7 @@
              (when (not= (:oscillator-1 (:matrix old-state)) (:oscillator-1 (:matrix new-state)))
                (if (:output-1 (:oscillator-1 (:matrix new-state)))
                  (.connect oscillator-1 (.-destination context))
-                 (.disconnect oscillator-1)))))
+                 (.disconnect oscillator-1 (.-destination context))))))
 
 (add-watch vcs3-data :oscillator-2-watcher
            (fn [_ _ old-state new-state]
@@ -38,7 +38,7 @@
              (when (not= (:oscillator-2 (:matrix old-state)) (:oscillator-2 (:matrix new-state)))
                (if (:output-1 (:oscillator-2 (:matrix new-state)))
                  (.connect oscillator-2 (.-destination context))
-                 (.disconnect oscillator-2)))))
+                 (.disconnect oscillator-2 (.-destination context))))))
 
 (add-watch vcs3-data :oscillator-3-watcher
            (fn [_ _ old-state new-state]
@@ -47,7 +47,7 @@
              (when (not= (:oscillator-3 (:matrix old-state)) (:oscillator-3 (:matrix new-state)))
                (if (:output-1 (:oscillator-3 (:matrix new-state)))
                  (.connect oscillator-3 (.-destination context))
-                 (.disconnect oscillator-3)))))
+                 (.disconnect oscillator-3 (.-destination context))))))
 
 (defn oscillator-1-frequency []
   [:div
