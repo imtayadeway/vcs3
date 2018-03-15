@@ -3,9 +3,9 @@
 
 (enable-console-print!)
 
-(defonce vcs3-data (atom {:oscillator-1 {:frequency {:value 1} :level-1 0 :level-2 0 :min 1 :max 10000}
-                          :oscillator-2 {:frequency {:value 1} :level-1 0 :level-2 0 :min 1 :max 10000}
-                          :oscillator-3 {:frequency {:value 0.025} :level-1 0 :level-2 0 :min 0.025 :max 500}
+(defonce vcs3-data (atom {:oscillator-1 {:frequency {:value 1 :min 1 :max 10000} :level-1 0 :level-2 0}
+                          :oscillator-2 {:frequency {:value 1 :min 1 :max 10000} :level-1 0 :level-2 0}
+                          :oscillator-3 {:frequency {:value 0.025 :min 0.025 :max 500} :level-1 0 :level-2 0}
                           :matrix {:oscillator-1 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}
                                    :oscillator-2 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}
                                    :oscillator-3 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}}}))
@@ -75,8 +75,8 @@
    [:h6 "Frequency"]
    [:input {:type "range"
             :value (get-in @vcs3-data [oscillator :frequency :value])
-            :min (get-in @vcs3-data [oscillator :min])
-            :max (get-in @vcs3-data [oscillator :max])
+            :min (get-in @vcs3-data [oscillator :frequency :min])
+            :max (get-in @vcs3-data [oscillator :frequency :max])
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [oscillator :frequency :value] (.. e -target -value)))}]])
 
