@@ -4,17 +4,20 @@
 (enable-console-print!)
 
 (defonce vcs3-data (atom {:oscillator-1 {:frequency {:value 1 :min 1 :max 10000}
-                                         :shape-1 {:level 0}
-                                         :shape-2 {:level 0}}
+                                         :shape-1 {:level 0
+                                                   :matrix {:output-1 false}}
+                                         :shape-2 {:level 0
+                                                   :matrix {:output-1 false}}}
                           :oscillator-2 {:frequency {:value 1 :min 1 :max 10000}
-                                         :shape-1 {:level 0}
-                                         :shape-2 {:level 0}}
+                                         :shape-1 {:level 0
+                                                   :matrix {:output-1 false}}
+                                         :shape-2 {:level 0
+                                                   :matrix {:output-1 false}}}
                           :oscillator-3 {:frequency {:value 0.025 :min 0.025 :max 500}
-                                         :shape-1 {:level 0}
-                                         :shape-2 {:level 0}}
-                          :matrix {:oscillator-1 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}
-                                   :oscillator-2 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}
-                                   :oscillator-3 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}}}))
+                                         :shape-1 {:level 0
+                                                   :matrix {:output-1 false}}
+                                         :shape-2 {:level 0
+                                                   :matrix {:output-1 false}}}}))
 
 (defonce context (new js/window.AudioContext))
 
@@ -59,12 +62,12 @@
       (when (changed key :frequency :value)
         (set! (.-value (.-frequency (:output-1 oscillator))) (get-in new-state [key :frequency :value]))
         (set! (.-value (.-frequency (:output-2 oscillator))) (get-in new-state [key :frequency :value])))
-      (when (changed :matrix key :shape-1 :output-1)
-        (if (get-in new-state [:matrix key :shape-1 :output-1])
+      (when (changed key :shape-1 :matrix :output-1)
+        (if (get-in new-state [key :shape-1 :matrix :output-1])
           (.connect level-1 (.-destination context))
           (.disconnect level-1 (.-destination context))))
-      (when (changed :matrix key :shape-2 :output-1)
-        (if (get-in new-state [:matrix key :shape-2 :output-1])
+      (when (changed key :shape-2 :matrix :output-1)
+        (if (get-in new-state [key :shape-2 :matrix :output-1])
           (.connect level-2 (.-destination context))
           (.disconnect level-2 (.-destination context))))
       (when (changed key :shape-1 :level)
@@ -86,10 +89,10 @@
             :style {:width "100%"}
             :on-change (fn [e] (swap! vcs3-data assoc-in [oscillator :frequency :value] (.. e -target -value)))}]])
 
-(defn patch [from to]
-  (let [checked (to (get-in (:matrix @vcs3-data) from))]
+(defn patch [path]
+  (let [checked (get-in @vcs3-data path)]
     [:input {:type "checkbox" :checked checked
-             :on-change #(swap! vcs3-data assoc-in [:matrix (first from) (second from) to] (not checked))}]))
+             :on-change #(swap! vcs3-data assoc-in path (not checked))}]))
 
 (defn level [oscillator shape]
   [:div
@@ -132,22 +135,22 @@
        [:th "Output Ch. 1"]]
       [:tr
        [:th "Oscillator 1 (sine)"]
-       [:td [patch [:oscillator-1 :shape-1] :output-1]]]
+       [:td [patch [:oscillator-1 :shape-1 :matrix :output-1]]]]
       [:tr
        [:th "Oscillator 1 (ramp)"]
-       [:td [patch [:oscillator-1 :shape-2] :output-1]]]
+       [:td [patch [:oscillator-1 :shape-2 :matrix :output-1]]]]
       [:tr
        [:th "Oscillator 2 (square)"]
-       [:td [patch [:oscillator-2 :shape-1] :output-1]]]
+       [:td [patch [:oscillator-2 :shape-1 :matrix :output-1]]]]
       [:tr
        [:th "Oscillator 2 (triangle)"]
-       [:td [patch [:oscillator-2 :shape-2] :output-1]]]
+       [:td [patch [:oscillator-2 :shape-2 :matrix :output-1]]]]
       [:tr
        [:th "Oscillator 3 (square)"]
-       [:td [patch [:oscillator-3 :shape-1] :output-1]]]
+       [:td [patch [:oscillator-3 :shape-1 :matrix :output-1]]]]
       [:tr
        [:th "Oscillator 3 (triangle)"]
-       [:td [patch [:oscillator-3 :shape-2] :output-1]]]]]]
+       [:td [patch [:oscillator-3 :shape-2 :matrix :output-1]]]]]]]
    [:div
     [:img {:src "/images/vcs3.jpg" :alt "VCS3"}]]])
 
