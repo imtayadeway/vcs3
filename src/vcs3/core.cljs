@@ -3,6 +3,13 @@
 
 (enable-console-print!)
 
+(defonce vcs3-data (atom {:oscillator-1 {:frequency 0.6 :level-1 0}
+                          :oscillator-2 {:frequency 0.6 :level-1 0}
+                          :oscillator-3 {:frequency 0.015 :level-1 0}
+                          :matrix {:oscillator-1 {:output-1 false}
+                                   :oscillator-2 {:output-1 false}
+                                   :oscillator-3 {:output-1 false}}}))
+
 (defonce context (new js/window.AudioContext))
 
 (defn create-oscillator [type frequency gain]
@@ -18,18 +25,12 @@
     (set! (.-value (.-gain gain)) value)
     gain))
 
-(defonce oscillator-1-level (create-gain 0))
-(defonce oscillator-1 (create-oscillator "sine" 0.6 oscillator-1-level))
-(defonce oscillator-2-level (create-gain 0))
-(defonce oscillator-2 (create-oscillator "square" 0.6 oscillator-2-level))
-(defonce oscillator-3-level (create-gain 0))
-(defonce oscillator-3 (create-oscillator "square" 0.015 oscillator-3-level))
-(defonce vcs3-data (atom {:oscillator-1 {:frequency 0.6 :level-1 0}
-                          :oscillator-2 {:frequency 0.6 :level-1 0}
-                          :oscillator-3 {:frequency 0.015 :level-1 0}
-                          :matrix {:oscillator-1 {:output-1 false}
-                                   :oscillator-2 {:output-1 false}
-                                   :oscillator-3 {:output-1 false}}}))
+(defonce oscillator-1-level (create-gain (get-in @vcs3-data [:oscillator-1 :level-1])))
+(defonce oscillator-1 (create-oscillator "sine" (get-in @vcs3-data [:oscillator-1 :frequency]) oscillator-1-level))
+(defonce oscillator-2-level (create-gain (get-in @vcs3-data [:oscillator-2 :level-1])))
+(defonce oscillator-2 (create-oscillator "square" (get-in @vcs3-data [:oscillator-2 :frequency]) oscillator-2-level))
+(defonce oscillator-3-level (create-gain (get-in @vcs3-data [:oscillator-3 :level-1])))
+(defonce oscillator-3 (create-oscillator "square" (get-in @vcs3-data [:oscillator-3 :frequency]) oscillator-3-level))
 
 (defn oscillator-watcher-fn
   [key oscillator level]
