@@ -70,7 +70,7 @@
       (when (changed key :shape-1 :level)
         (set! (.-value (.-gain level-1)) (get-in new-state [key :shape-1 :level])))
       (when (changed key :shape-2 :level)
-        (set! (.-value (.-gain level-2)) (get-in new-state [key :shape-1 :level]))))))
+        (set! (.-value (.-gain level-2)) (get-in new-state [key :shape-2 :level]))))))
 
 (add-watch vcs3-data :oscillator-1-watcher (oscillator-watcher-fn :oscillator-1 oscillator-1 oscillator-1-level-1 oscillator-1-level-2))
 (add-watch vcs3-data :oscillator-2-watcher (oscillator-watcher-fn :oscillator-2 oscillator-2 oscillator-2-level-1 oscillator-2-level-2))
