@@ -3,9 +3,9 @@
 
 (enable-console-print!)
 
-(defonce vcs3-data (atom {:oscillator-1 {:frequency 1 :level-1 0 :level-2 0 :min 1 :max 10000}
-                          :oscillator-2 {:frequency 1 :level-1 0 :level-2 0 :min 1 :max 10000}
-                          :oscillator-3 {:frequency 0.025 :level-1 0 :level-2 0 :min 0.025 :max 500}
+(defonce vcs3-data (atom {:oscillator-1 {:frequency {:value 1} :level-1 0 :level-2 0 :min 1 :max 10000}
+                          :oscillator-2 {:frequency {:value 1} :level-1 0 :level-2 0 :min 1 :max 10000}
+                          :oscillator-3 {:frequency {:value 0.025} :level-1 0 :level-2 0 :min 0.025 :max 500}
                           :matrix {:oscillator-1 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}
                                    :oscillator-2 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}
                                    :oscillator-3 {:shape-1 {:output-1 false} :shape-2 {:output-1 false}}}}))
@@ -33,26 +33,26 @@
 (defonce oscillator-1-level-1 (create-gain (get-in @vcs3-data [:oscillator-1 :level-1])))
 (defonce oscillator-1-level-2 (create-gain (get-in @vcs3-data [:oscillator-1 :level-2])))
 (defonce oscillator-1
-  (let [frequency (get-in @vcs3-data [:oscillator-1 :frequency])]
+  (let [frequency (get-in @vcs3-data [:oscillator-1 :frequency :value])]
     (create-oscillator "sine" "sawtooth" frequency oscillator-1-level-1 oscillator-1-level-2)))
 (defonce oscillator-2-level-1 (create-gain (get-in @vcs3-data [:oscillator-2 :level-1])))
 (defonce oscillator-2-level-2 (create-gain (get-in @vcs3-data [:oscillator-2 :level-2])))
 (defonce oscillator-2
-  (let [frequency (get-in @vcs3-data [:oscillator-2 :frequency])]
+  (let [frequency (get-in @vcs3-data [:oscillator-2 :frequency :value])]
     (create-oscillator "square" "triangle" frequency oscillator-2-level-1 oscillator-2-level-2)))
 (defonce oscillator-3-level-1 (create-gain (get-in @vcs3-data [:oscillator-3 :level-1])))
 (defonce oscillator-3-level-2 (create-gain (get-in @vcs3-data [:oscillator-3 :level-2])))
 (defonce oscillator-3
-  (let [frequency (get-in @vcs3-data [:oscillator-3 :frequency])]
+  (let [frequency (get-in @vcs3-data [:oscillator-3 :frequency :value])]
     (create-oscillator "square" "triangle" frequency oscillator-3-level-1 oscillator-3-level-2)))
 
 (defn oscillator-watcher-fn
   [key oscillator level-1 level-2]
   (fn [_ _ old-state new-state]
     (let [changed (fn [& args] (apply not= (map #(get-in % args) [old-state new-state])))]
-      (when (changed key :frequency)
-        (set! (.-value (.-frequency (:output-1 oscillator))) (get-in new-state [key :frequency]))
-        (set! (.-value (.-frequency (:output-2 oscillator))) (get-in new-state [key :frequency])))
+      (when (changed key :frequency :value)
+        (set! (.-value (.-frequency (:output-1 oscillator))) (get-in new-state [key :frequency :value]))
+        (set! (.-value (.-frequency (:output-2 oscillator))) (get-in new-state [key :frequency :value])))
       (when (changed :matrix key :shape-1 :output-1)
         (if (get-in new-state [:matrix key :shape-1 :output-1])
           (.connect level-1 (.-destination context))
@@ -74,11 +74,11 @@
   [:div
    [:h6 "Frequency"]
    [:input {:type "range"
-            :value (get-in @vcs3-data [oscillator :frequency])
+            :value (get-in @vcs3-data [oscillator :frequency :value])
             :min (get-in @vcs3-data [oscillator :min])
             :max (get-in @vcs3-data [oscillator :max])
             :style {:width "100%"}
-            :on-change (fn [e] (swap! vcs3-data assoc-in [oscillator :frequency] (.. e -target -value)))}]])
+            :on-change (fn [e] (swap! vcs3-data assoc-in [oscillator :frequency :value] (.. e -target -value)))}]])
 
 (defn patch [from to]
   (let [checked (to (get-in (:matrix @vcs3-data) from))]
