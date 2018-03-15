@@ -3,9 +3,9 @@
 
 (enable-console-print!)
 
-(defonce vcs3-data (atom {:oscillator-1 {:frequency 1 :level-1 0}
-                          :oscillator-2 {:frequency 1 :level-1 0}
-                          :oscillator-3 {:frequency 0.025 :level-1 0}
+(defonce vcs3-data (atom {:oscillator-1 {:frequency 1 :level-1 0 :min 1 :max 10000}
+                          :oscillator-2 {:frequency 1 :level-1 0 :min 1 :max 10000}
+                          :oscillator-3 {:frequency 0.025 :level-1 0 :min 0.025 :max 500}
                           :matrix {:oscillator-1 {:output-1 false}
                                    :oscillator-2 {:output-1 false}
                                    :oscillator-3 {:output-1 false}}}))
@@ -49,29 +49,15 @@
 (add-watch vcs3-data :oscillator-2-watcher (oscillator-watcher-fn :oscillator-2 oscillator-2 oscillator-2-level))
 (add-watch vcs3-data :oscillator-3-watcher (oscillator-watcher-fn :oscillator-3 oscillator-3 oscillator-3-level))
 
-(defn oscillator-1-frequency []
+(defn frequency [key]
   [:div
    [:h6 "Frequency"]
-   [:p "Oscillator 1 is oscillating at " (:frequency (:oscillator-1 @vcs3-data)) " Hz."]
-   [:input {:type "range" :value (:frequency (:oscillator-1 @vcs3-data)) :min 0.6 :max 16750
+   [:input {:type "range"
+            :value (get-in @vcs3-data [key :frequency])
+            :min (get-in @vcs3-data [key :min])
+            :max (get-in @vcs3-data [key :max])
             :style {:width "100%"}
-            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-1 :frequency] (.. e -target -value)))}]])
-
-(defn oscillator-2-frequency []
-  [:div
-   [:h6 "Frequency"]
-   [:p "Oscillator 2 is oscillating at " (:frequency (:oscillator-2 @vcs3-data)) " Hz."]
-   [:input {:type "range" :value (:frequency (:oscillator-2 @vcs3-data)) :min 0.6 :max 16750
-            :style {:width "100%"}
-            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-2 :frequency] (.. e -target -value)))}]])
-
-(defn oscillator-3-frequency []
-  [:div
-   [:h6 "Frequency"]
-   [:p "Oscillator 3 is oscillating at " (:frequency (:oscillator-3 @vcs3-data)) " Hz."]
-   [:input {:type "range" :value (:frequency (:oscillator-3 @vcs3-data)) :min 0.015 :max 500
-            :style {:width "100%"}
-            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-3 :frequency] (.. e -target -value)))}]])
+            :on-change (fn [e] (swap! vcs3-data assoc-in [key :frequency] (.. e -target -value)))}]])
 
 (defn patch [from to]
   (let [checked (to (from (:matrix @vcs3-data)))]
@@ -112,15 +98,15 @@
   [:div
    [:div
     [:h3 "Oscillator 1"]
-    [oscillator-1-frequency]
+    [frequency :oscillator-1]
     [oscillator-1-level-sine]]
    [:div
     [:h3 "Oscillator 2"]
-    [oscillator-2-frequency]
+    [frequency :oscillator-2]
     [oscillator-2-level-square]]
    [:div
     [:h3 "Oscillator 3"]
-    [oscillator-3-frequency]
+    [frequency :oscillator-3]
     [oscillator-3-level-square]]
    [:div
     [:h3 "Matrix Board"]
