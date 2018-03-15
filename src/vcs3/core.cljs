@@ -64,50 +64,32 @@
     [:input {:type "checkbox" :checked checked
              :on-change #(swap! vcs3-data assoc-in [:matrix from to] (not checked))}]))
 
-(defn oscillator-1-level-sine []
+(defn level [oscillator output]
   [:div
-   [:h6 "Level (sine)"]
    [:input {:type "range"
-            :value (get-in @vcs3-data [:oscillator-1 :level-1])
+            :value (get-in @vcs3-data [oscillator output])
             :min 0
             :max 10
             :step 0.1
-            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-1 :level-1] (.. e -target -value)))}]])
-
-(defn oscillator-2-level-square []
-  [:div
-   [:h6 "Level (square)"]
-   [:input {:type "range"
-            :value (get-in @vcs3-data [:oscillator-2 :level-1])
-            :min 0
-            :max 10
-            :step 0.1
-            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-2 :level-1] (.. e -target -value)))}]])
-
-(defn oscillator-3-level-square []
-  [:div
-   [:h6 "Level (square)"]
-   [:input {:type "range"
-            :value (get-in @vcs3-data [:oscillator-3 :level-1])
-            :min 0
-            :max 10
-            :step 0.1
-            :on-change (fn [e] (swap! vcs3-data assoc-in [:oscillator-3 :level-1] (.. e -target -value)))}]])
+            :on-change (fn [e] (swap! vcs3-data assoc-in [oscillator output] (.. e -target -value)))}]])
 
 (defn vcs3 []
   [:div
    [:div
     [:h3 "Oscillator 1"]
     [frequency :oscillator-1]
-    [oscillator-1-level-sine]]
+    [:h6 "Level (sine)"]
+    [level :oscillator-1 :level-1]]
    [:div
     [:h3 "Oscillator 2"]
     [frequency :oscillator-2]
-    [oscillator-2-level-square]]
+    [:h6 "Level (square)"]
+    [level :oscillator-2 :level-1]]
    [:div
     [:h3 "Oscillator 3"]
     [frequency :oscillator-3]
-    [oscillator-3-level-square]]
+    [:h6 "Level (square)"]
+    [level :oscillator-3 :level-1]]
    [:div
     [:h3 "Matrix Board"]
     [:table
