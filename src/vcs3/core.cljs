@@ -25,12 +25,13 @@
 (defn oscillator-watcher-fn
   [key oscillator]
   (fn [_ _ old-state new-state]
-    (when (not= (key old-state) (key new-state))
-      (set! (.-value (.-frequency oscillator)) (:frequency (key new-state))))
-    (when (not= (->> old-state :matrix key :output-1) (->> new-state :matrix key :output-1))
-      (if (:output-1 (key (:matrix new-state)))
-        (.connect oscillator (.-destination context))
-        (.disconnect oscillator (.-destination context))))))
+    (let [changed (fn [& args] (apply not= (map #(get-in % args) [old-state new-state])))]
+      (when (changed key :frequency)
+        (set! (.-value (.-frequency oscillator)) (->> new-state key :frequency)))
+      (when (changed :matrix key :output-1)
+        (if (->> new-state :matrix key :output-1)
+          (.connect oscillator (.-destination context))
+          (.disconnect oscillator (.-destination context)))))))
 
 (add-watch vcs3-data :oscillator-1-watcher (oscillator-watcher-fn :oscillator-1 oscillator-1))
 (add-watch vcs3-data :oscillator-2-watcher (oscillator-watcher-fn :oscillator-2 oscillator-2))
