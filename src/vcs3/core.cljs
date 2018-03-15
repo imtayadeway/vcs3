@@ -3,9 +3,9 @@
 
 (enable-console-print!)
 
-(defonce vcs3-data (atom {:oscillator-1 {:frequency 0.6 :level-1 0}
-                          :oscillator-2 {:frequency 0.6 :level-1 0}
-                          :oscillator-3 {:frequency 0.015 :level-1 0}
+(defonce vcs3-data (atom {:oscillator-1 {:frequency 1 :level-1 0}
+                          :oscillator-2 {:frequency 1 :level-1 0}
+                          :oscillator-3 {:frequency 0.025 :level-1 0}
                           :matrix {:oscillator-1 {:output-1 false}
                                    :oscillator-2 {:output-1 false}
                                    :oscillator-3 {:output-1 false}}}))
